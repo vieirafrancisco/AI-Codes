@@ -1,4 +1,5 @@
 import random
+import time
 
 import pygame
 
@@ -27,7 +28,7 @@ class App:
         self.population.draw_best_order(self.display_surf)
 
     def on_loop(self):
-        pass
+        self.population.make_mutation()
 
     def on_execute(self):
         self.on_init()

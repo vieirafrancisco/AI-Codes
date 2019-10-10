@@ -17,18 +17,14 @@ class App:
         pygame.init()
         self.running = True
         self.display_surf = pygame.display.set_mode(self.size)
-        self.population = [Ball(random.randint(0,self.width), random.randint(0,self.height)) for i in range(20)]
-        self.pop = Population(10, pop_size=100)
+        self.population = Population(10, pop_size=100)
 
     def on_cleanup(self):
         pygame.quit()
 
     def on_render(self):
-        for element in self.population:
-            element.draw(self.display_surf)
-
-        for e1, e2 in zip(self.population[:-1], self.population[1:]):
-            pygame.draw.line(self.display_surf, (0,125,0), e1.pos, e2.pos)
+        self.display_surf.fill((0,0,0))
+        self.population.draw_best_order(self.display_surf)
 
     def on_loop(self):
         pass

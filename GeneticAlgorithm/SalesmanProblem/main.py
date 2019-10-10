@@ -3,11 +3,13 @@ import random
 import pygame
 
 from ball import Ball
+from population import Population
+from settings import *
 
 class App:
 
-    def __init__(self, width, height):
-        self.size = self.width, self.height = width, height
+    def __init__(self):
+        self.size = self.width, self.height = WIN_WIDTH, WIN_HEIGHT
         self.running = False
         self.display_surf = None
 
@@ -16,6 +18,7 @@ class App:
         self.running = True
         self.display_surf = pygame.display.set_mode(self.size)
         self.population = [Ball(random.randint(0,self.width), random.randint(0,self.height)) for i in range(20)]
+        self.pop = Population(10, pop_size=100)
 
     def on_cleanup(self):
         pygame.quit()
@@ -48,5 +51,5 @@ class App:
 
 
 if __name__ == '__main__':
-    app = App(640, 480)
+    app = App()
     app.on_execute()

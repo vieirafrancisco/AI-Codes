@@ -18,14 +18,15 @@ class App:
         pygame.init()
         self.running = True
         self.display_surf = pygame.display.set_mode(self.size)
-        self.population = Population(10, pop_size=100)
+        self.population = Population(5, pop_size=50)
 
     def on_cleanup(self):
         pygame.quit()
 
     def on_render(self):
         self.display_surf.fill((0,0,0))
-        self.population.draw_best_order(self.display_surf)
+        self.population.draw(self.display_surf, self.population.curr_order, color=(255,255,255), line_width=3)
+        self.population.draw(self.display_surf, self.population.best[0], (255,105,180), 4)
 
     def on_loop(self):
         self.population.make_mutation()
@@ -39,6 +40,8 @@ class App:
             self.on_loop()
             self.on_render()
             pygame.display.flip()
+        
+            time.sleep(1)
 
         self.on_cleanup()
 

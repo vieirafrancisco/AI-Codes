@@ -17,15 +17,21 @@ def swap(arr, x, y):
     temp_arr[y] = aux
     return tuple(temp_arr)
 
+def factorial(n):
+    if n==0 or n==1:
+        return 1
+    return factorial(n-1)*n
+
 class Population:
 
     def __init__(self, size, pop_size=100):
         self.size = size
-        self.pop_size = pop_size
+        self.pop_size = min(pop_size, factorial(size))
         self.elements = [Ball(random.randint(0, WIN_WIDTH), random.randint(0, WIN_HEIGHT)) for _ in range(size)]
         self.orders = self.init_orders()
         self.fitness = pop_size*[0]
-        self.best = None
+        self.best = (0, INF)
+        self.curr_order = None
         self.calculate_fitness()
 
     def init_orders(self):
@@ -33,8 +39,8 @@ class Population:
         return [next(iter_orders) for _ in range(self.pop_size)]
 
     def calculate_fitness(self):
-        m = 0
-        max_index = 0
+        m, total_fitness = INF, 0
+        min_idx = 0
         for idx,order in enumerate(self.orders):
             fitness = 0
             for i1, i2 in zip(order[:-1], order[1:]):
@@ -42,42 +48,48 @@ class Population:
                 x1, y1 = self.elements[i2].pos
                 fitness += euclidian_distance(x0, y0, x1, y1)
             self.fitness[idx] = fitness
-            if fitness > m:
+            total_fitness += fitness
+            if fitness < m:
                 m = fitness
-                max_idx = idx
-        self.best = self.orders[max_idx]
+                min_idx = idx
+        for idx in range(self.pop_size):
+            self.fitness[idx] /= total_fitness
+            self.fitness[idx] = 1-self.fitness[idx]
+        if self.fitness[min_idx] < self.best[1]:
+            self.best = (self.orders[min_idx], self.fitness[min_idx])
+        self.curr_order = self.orders[min_idx]
+        print(self.fitness)
 
-    def draw_best_order(self, surface):
-        for idx in self.best:
+    def draw(self, surface, order, color=(0,125,0), line_width=1):
+        tmp_order = order
+        for idx in tmp_order:
             self.elements[idx].draw(surface)
 
-        for i1, i2 in zip(self.best[:-1], self.best[1:]):
-            pygame.draw.line(surface, (255,105,180), self.elements[i1].pos, self.elements[i2].pos, 4)
+        for i1, i2 in zip(tmp_order[:-1], tmp_order[1:]):
+            pygame.draw.line(surface, color, self.elements[i1].pos, self.elements[i2].pos, line_width)
 
     def make_selection(self):
-        m1, m2, max_idx1, max_idx2 = 0,0,0,0
-        for idx, fitness in enumerate(self.fitness):
-            if fitness > m1:
-                m2 = m1
-                max_idx2 = max_idx1
-                m1 = fitness
-                max_idx1 = idx
-        return (self.orders[max_idx1], self.orders[max_idx2])
+        idx = 0
+        r = random.random()
+        while(r > 0):
+            r -= self.fitness[idx]
+            idx+=1
+        idx-=1
+        return self.orders[idx]
 
     def make_mutation(self):
-        parents = self.make_selection()
-        s = set()
-        s.add(parents[0])
-        s.add(parents[1])
-
-        while(len(s) < self.pop_size):
-            print(len(s), self.pop_size)
-            p_idx = random.randint(0,1)
-            order = parents[p_idx]
-            x, y = 0, 0
-            while(x == y):
-                x, y = random.randint(0,self.size-1), random.randint(0,self.size-1)
-            order = swap(order, x, y)
-            s.add(order)
-
+        new_population = []
+        for _ in range(self.pop_size):
+            order = self.make_selection()
+            order = self.mutate(order)
+            new_population.append(order)
+        for idx, element in enumerate(new_population):
+            self.orders[idx] = element
         self.calculate_fitness()
+
+    def mutate(self, element):
+        idx_x, idx_y = 0, 0
+        while(idx_x == idx_y):
+            idx_x = random.randint(0, len(element)-1)
+            idx_y = random.randint(0, len(element)-1)
+        return swap(element, idx_x, idx_y)

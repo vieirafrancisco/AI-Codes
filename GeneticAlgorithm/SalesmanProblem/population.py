@@ -72,15 +72,19 @@ class Population:
         idx-=1
         return self.orders[idx]
 
-    def make_mutation(self):
-        new_population = []
-        for _ in range(self.pop_size):
-            order = self.make_selection()
-            order = self.mutate(order)
-            new_population.append(order)
-        for idx, element in enumerate(new_population):
-            self.orders[idx] = element
-        self.calculate_fitness()
+    def cross_over(self, order_a, order_b):
+        split_size = len(order_a)//2
+        r = random.randint(0,1)
+        if r == 0:
+            new_order = list(order_a[:split_size])
+            order = order_b
+        else:
+            new_order = list(order_b[:split_size])
+            order = order_a
+        for o_i in order:
+            if o_i not in new_order:
+                new_order.append(o_i)
+        return tuple(new_order)
 
     def mutate(self, element):
         idx_x, idx_y = 0, 0
@@ -88,3 +92,15 @@ class Population:
             idx_x = random.randint(0, len(element)-1)
             idx_y = random.randint(0, len(element)-1)
         return swap(element, idx_x, idx_y)
+
+    def generate_new_population(self):
+        new_population = []
+        for _ in range(self.pop_size):
+            order_a = self.make_selection()
+            order_b = self.make_selection()
+            new_order = self.cross_over(order_a, order_b) 
+            new_order = self.mutate(new_order)
+            new_population.append(new_order)
+        for idx, order in enumerate(new_population):
+            self.orders[idx] = order
+        self.calculate_fitness()

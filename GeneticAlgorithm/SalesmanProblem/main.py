@@ -18,7 +18,7 @@ class App:
         pygame.init()
         self.running = True
         self.display_surf = pygame.display.set_mode(self.size)
-        self.population = Population(20, pop_size=100)
+        self.population = Population(10, pop_size=100)
 
     def on_cleanup(self):
         pygame.quit()
@@ -29,7 +29,8 @@ class App:
         self.population.draw(self.display_surf, self.population.best[0], (255,105,180), 6)
 
     def on_loop(self):
-        self.population.make_mutation()
+        self.population.generate_new_population()
+        pygame.display.set_caption(f"Genetic Algorithm | best-fitness: {self.population.best[1]}")
 
     def on_execute(self):
         self.on_init()
@@ -40,8 +41,6 @@ class App:
             self.on_loop()
             self.on_render()
             pygame.display.flip()
-        
-            #time.sleep(1)
 
         self.on_cleanup()
 

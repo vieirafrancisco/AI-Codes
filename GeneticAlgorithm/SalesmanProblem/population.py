@@ -31,7 +31,7 @@ class Population:
         self.orders = self.init_orders()
         self.fitness = pop_size*[0]
         self.best = (0, INF)
-        self.curr_order = None
+        self.curr_best = None
         self.calculate_fitness()
 
     def init_orders(self):
@@ -39,26 +39,21 @@ class Population:
         return [next(iter_orders) for _ in range(self.pop_size)]
 
     def calculate_fitness(self):
-        m, total_fitness = INF, 0
-        min_idx = 0
+        total_fitness = 0
         for idx,order in enumerate(self.orders):
             fitness = 0
             for i1, i2 in zip(order[:-1], order[1:]):
                 x0, y0 = self.elements[i1].pos
                 x1, y1 = self.elements[i2].pos
                 fitness += euclidian_distance(x0, y0, x1, y1)
-            self.fitness[idx] = fitness
-            total_fitness += fitness
-            if fitness < m:
-                m = fitness
-                min_idx = idx
+            self.fitness[idx] = 1 / (fitness + 1)
+            total_fitness += self.fitness[idx]
+            if fitness < self.best[1]:
+                self.best = (self.orders[idx], fitness)
+            self.curr_best = self.orders[idx]
+        
         for idx in range(self.pop_size):
             self.fitness[idx] /= total_fitness
-            self.fitness[idx] = 1-self.fitness[idx]
-        if self.fitness[min_idx] < self.best[1]:
-            self.best = (self.orders[min_idx], self.fitness[min_idx])
-        self.curr_order = self.orders[min_idx]
-        print(self.fitness)
 
     def draw(self, surface, order, color=(0,125,0), line_width=1):
         tmp_order = order

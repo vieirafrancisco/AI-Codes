@@ -4,7 +4,7 @@ from settings import *
 
 class City:
 
-    def __init__(self, label, pos_x, pos_y, dist, radius=15, color=(255,255,255)):
+    def __init__(self, label, pos_x, pos_y, dist, radius=20, color=(255,255,255)):
         self.label = label
         self.pos = self.pos_x, self.pos_y = pos_x, pos_y
         self.radius = radius

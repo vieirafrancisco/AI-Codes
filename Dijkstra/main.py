@@ -8,7 +8,7 @@ from settings import *
 
 def user_input():
     input_lines = []
-    with open("in.txt", "r") as f:
+    with open("in2.txt", "r") as f:
         input_lines = f.readlines()
     n, m, s, t = map(int, input_lines[0].split())
     graph = {}

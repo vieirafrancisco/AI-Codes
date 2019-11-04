@@ -39,13 +39,13 @@ class Graph:
     def draw(self, surface):
         for i in self.adjacences:
             for v in self.adjacences[i]:
-                pygame.draw.line(surface, (150,150,150), self.cities[i].pos, self.cities[v[1]].pos, 4)
-                text = pygame.font.Font(None, 30).render(str(v[0]), False, (125,255,125))
-                surface.blit(text, midpoint(*self.cities[i].pos, *self.cities[v[1]].pos))
+                pygame.draw.line(surface, (150,150,150), self.cities[i].pos, self.cities[v[1]].pos, 6)
+                #text = pygame.font.Font(None, 30).render(str(v[0]), False, (125,255,125))
+                #surface.blit(text, midpoint(*self.cities[i].pos, *self.cities[v[1]].pos))
 
         path = get_path(self.dijkstra[1], self.target, self.source)
         for i, j in zip(path[:-1], path[1:]):
-          pygame.draw.line(surface, (0,0,150), self.cities[i].pos, self.cities[j].pos, 4)
+          pygame.draw.line(surface, (0,200,150), self.cities[i].pos, self.cities[j].pos, 8)
 
         for idx, city in enumerate(self.cities):
             if idx == self.source: city.color=(200,0,0)

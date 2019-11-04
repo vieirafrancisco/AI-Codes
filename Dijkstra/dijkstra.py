@@ -1,8 +1,8 @@
 import heapq # heap queue to peform an priority queue
 
-def dijkstra(s, t, n, graph):
-    if t >= n: return -1
-    INF = 99999999
+from settings import *
+
+def dijkstra(s, n, graph):
     dist = n*[INF]
     visited = n*[False]
     origin = n*[-1]
@@ -20,8 +20,7 @@ def dijkstra(s, t, n, graph):
                 origin[v[1]] = u[1]
                 heapq.heappush(p_queue, (dist[v[1]], v[1]))
 
-    if dist[t] == INF: return 0
-    return dist[t], origin
+    return dist, origin
 
 if __name__ == '__main__':
     n, m, s, t = map(int, input().split())

@@ -29,12 +29,14 @@ class App:
 
     def on_init(self):
         pygame.init()
+        pygame.font.init()
         self.running = True
         self.display_surf = pygame.display.set_mode(self.size)
         self.graph = Graph(*user_input())
 
     def on_cleanup(self):
         pygame.quit()
+        pygame.font.quit()
 
     def on_render(self):
         self.graph.draw(self.display_surf)
@@ -48,6 +50,7 @@ class App:
         while(self.running):
             for event in pygame.event.get():
                 self.on_event(event)
+            self.display_surf.fill((0,0,0))
             self.on_loop()
             self.on_render()
             pygame.display.flip()

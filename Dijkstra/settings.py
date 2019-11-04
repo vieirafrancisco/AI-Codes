@@ -1,5 +1,8 @@
 import pygame
 
+# definers
+INF = 99999999
+
 # window
 WIN_SHAPE = WIDTH, HEIGHT = 920, 480
 

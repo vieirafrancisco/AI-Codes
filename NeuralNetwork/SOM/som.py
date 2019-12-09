@@ -27,7 +27,7 @@ class SOM:
                 bmu_idx = nodes.index(min(nodes))
                 for j in range(self.num_clusters):
                     for i in range(self.array.shape[1]):
-                        theta = gaussian(euclidian_distance(self.array[bmu_idx], self.weights[j]))
+                        theta = euclidian_distance(self.array[bmu_idx], self.weights[j])
                         #print(self.weights[j][i], theta, self.learning_rate, (self.array[idx][i] - self.weights[j][i]))
                         self.weights[j][i] = self.weights[j][i] + theta * self.learning_rate * (self.array[idx][i] - self.weights[j][i])
             if self.verbose:
@@ -43,13 +43,12 @@ class SOM:
 
 if __name__ == '__main__':
     arr = np.array([[2,3],[2,4],[4,5], [4,6], [7,8],[9,1], [9,4], [87,75],[70,56],[50,88], [90, 67]])
-    arr = arr / np.linalg.norm(arr)
+    #arr = arr / np.linalg.norm(arr)
     #for x, y in arr:
         #plt.scatter(x, y, c='b')
     #plt.show()
-    net = SOM(2, arr, num_iterations=100, learning_rate=0.01, verbose=False)
+    net = SOM(2, arr, num_iterations=20, learning_rate=0.001, verbose=False)
     net.train()
-    y1 = net.predict([8,9])
+    y1 = net.predict([8,10])
     y2 = net.predict([90,88])
     print(y1, y2)
-

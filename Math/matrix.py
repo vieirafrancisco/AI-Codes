@@ -50,10 +50,9 @@ class Matrix:
             raise Exception("Can't add this element!")
         return m
 
-    def randomize(self, n=100):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                self.matrix[i][j] = random.randint(0, n)
+    def __sub__(self, other):
+        m = other * -1
+        return self + m
 
     @property
     def T(self):
@@ -63,6 +62,41 @@ class Matrix:
                 tm.matrix[i][j] = self.matrix[j][i]
         return tm
 
+    @staticmethod
+    def map(m, func):
+        result_m = Matrix(m.rows, m.cols)
+        for i in range(result_m.rows):
+            for j in range(result_m.cols):
+                result_m.matrix[i][j] = func(m.matrix[i][j])
+        return result_m
+
+    @staticmethod
+    def from_arry(arr):
+        m = Matrix(len(arr), 1)
+        for i in range(m.rows):
+            m.matrix[i][0] = arr[i]
+        return m
+
+    def to_array(self):
+        arr = []
+        for i in range(self.rows):
+            for j in range(self.cols):
+                arr.append(self.matrix[i][j])
+        return arr
+
+    def randomize(self, n=None):
+        if n and isinstance(n, int):
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    self.matrix[i][j] = random.randint(0, n)
+        else:
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    self.matrix[i][j] = random.random() * 2 - 1
+
+
+def f(x):
+    return x**2
 
 if __name__ == '__main__':
     m = Matrix(2, 3)
@@ -75,3 +109,8 @@ if __name__ == '__main__':
     print("------------")
     print(m + m)
     print((m + m).T + 5)
+    print("------------")
+    print(Matrix.map(m, f).to_array())
+    a = Matrix.from_arry([1,2,3])
+    b = Matrix.from_arry([4,5,6])
+    print(b - a)

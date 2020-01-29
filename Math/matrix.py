@@ -71,7 +71,7 @@ class Matrix:
         return result_m
 
     @staticmethod
-    def from_arry(arr):
+    def from_array(arr):
         m = Matrix(len(arr), 1)
         for i in range(m.rows):
             m.matrix[i][0] = arr[i]

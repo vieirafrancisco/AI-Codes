@@ -1,8 +1,10 @@
+import random
+
 from resources.matrix import Matrix
-from resources.functions import sigmoid
+from resources.functions import sigmoid, dsigmoid, swap
 
 class MLP:
-    def __init__(self, layers, learning_rate=0.1, epochs=100, verbose=False):
+    def __init__(self, layers, learning_rate=0.1, epochs=5000, verbose=False):
         self.layers = layers
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -12,27 +14,45 @@ class MLP:
 
     def feedfoward(self, input_array):
         data = Matrix.from_array(input_array)
+        memo = [data]
         for w, b in zip(self.weights, self.bias):
             data = Matrix.map(w * data + b, sigmoid)
-        return data
+            memo.append(data)
+        return memo, data
 
     def train(self, x_train, y_train):
-        for epoch in range(1):
+        for epoch in range(self.epochs):
+            x_train, y_train = self.randomize(x_train, y_train)
             for x, y in zip(x_train, y_train):
-                output = self.feedfoward(x)
+                memo, output = self.feedfoward(x)
                 label = Matrix.from_array(y)
                 error = label - output
+                memo = memo[::-1]
 
-                for w in self.weights[::-1]:
-                    delta_w = error * self.learning_rate * (d * (1-d)) * h # corrigir
-                    delta_b = error * self.learning_rate * (d * (1-d)) # corrigir
+                for h, a, w in zip(memo[1:], memo[:-1], self.weights[::-1]):
+                    gradient = Matrix.multiply(error, Matrix.map(a, dsigmoid)) * self.learning_rate
+                    delta_w = gradient * h.T
+                    idx = self.weights.index(w)
+                    self.weights[idx] += delta_w
+                    self.bias[idx] += gradient
                     error = w.T * error
 
         if self.verbose:
             print(f"epoch {epoch}:")
 
+    def test(self, x_test, y_test):
+        for x, y in zip(x_test, y_test):
+            _, output = self.feedfoward(x)
+
+    def randomize(self, x_train, y_train):
+        idx1, idx2 = random.randint(0,len(x_train)-1), random.randint(0,len(x_train)-1)
+        swap(x_train, idx1, idx2)
+        swap(y_train, idx1, idx2)
+        return x_train, y_train
 
 if __name__ == '__main__':
-    mlp = MLP([3,4,2,2])
+    mlp = MLP([2,3,1])
     #print(mlp.feedfoward([1,2,3]))
-    mlp.train([[1,2,3], [2,3,5]], [[1,0], [0,1]])
+    mlp.train([[1,0], [0,1], [0,0], [1,1]], [[1], [1], [0], [0]])
+    _, result = mlp.feedfoward([1,1])
+    print(result)

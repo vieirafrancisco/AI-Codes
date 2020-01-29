@@ -43,13 +43,13 @@ class Matrix:
                 for j in range(other.cols):
                     for k in range(self.cols):
                         m.matrix[i][j] += self.matrix[i][k] * other.matrix[k][j]
-        elif isinstance(other, int):
+        elif isinstance(other, int) or isinstance(other, float):
             m = Matrix(self.rows, self.cols)
             for i in range(self.rows):
                 for j in range(self.cols):
                     m.matrix[i][j] = self.matrix[i][j] * other
         else:
-            raise Exception("Can't add this element!")
+            raise Exception("Can't multiply this element!")
         return m
 
     def __sub__(self, other):
@@ -63,6 +63,18 @@ class Matrix:
             for j in range(tm.cols):
                 tm.matrix[i][j] = self.matrix[j][i]
         return tm
+
+    @staticmethod
+    def multiply(m1, m2): # Hadamard product
+        if m1.rows == m2.rows and m1.cols == m2.cols:
+            rm = Matrix(m1.rows, m1.cols)
+            for i in range(rm.rows):
+                for j in range(rm.cols):
+                    rm.matrix[i][j] = m1.matrix[i][j] * m2.matrix[i][j]
+            return rm
+        else:
+            raise Exception("Can't multiply elementwise!")
+
 
     @staticmethod
     def map(m, func):

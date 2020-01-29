@@ -14,21 +14,25 @@ class MLP:
         data = Matrix.from_array(input_array)
         for w, b in zip(self.weights, self.bias):
             data = Matrix.map(w * data + b, sigmoid)
-        return data.to_array()
+        return data
 
     def train(self, x_train, y_train):
-        for epoch in range(self.epochs):
+        for epoch in range(1):
             for x, y in zip(x_train, y_train):
-                output = self.feedfoward(x_train)
+                output = self.feedfoward(x)
+                label = Matrix.from_array(y)
+                error = label - output
 
-                ## compare output with de answer
-
-                ## update weights and bias
+                for w in self.weights[::-1]:
+                    delta_w = error * self.learning_rate * (d * (1-d)) * h # corrigir
+                    delta_b = error * self.learning_rate * (d * (1-d)) # corrigir
+                    error = w.T * error
 
         if self.verbose:
-            pass
+            print(f"epoch {epoch}:")
 
 
 if __name__ == '__main__':
     mlp = MLP([3,4,2,2])
-    print(mlp.feedfoward([1,2,3]))
+    #print(mlp.feedfoward([1,2,3]))
+    mlp.train([[1,2,3], [2,3,5]], [[1,0], [0,1]])

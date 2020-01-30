@@ -1,0 +1,1 @@
+WIDTH, HEIGHT = 400, 400

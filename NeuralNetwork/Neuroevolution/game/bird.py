@@ -9,7 +9,7 @@ class Bird:
         self.color = color
         self.gravity = 0.4
         self.velocity = 0
-        self.lift = -2
+        self.lift = -1.8
         self.rect = pygame.Rect(self.posx, self.posy, 20, 20)
 
     def draw(self, surface):
@@ -29,6 +29,12 @@ class Bird:
     def collide(self, pipe):
         offset_window = self.rect.y > HEIGHT or self.rect.y < 0
         if self.rect.colliderect(pipe.top_rect) or self.rect.colliderect(pipe.btn_rect) or offset_window:
+            return True
+        else:
+            return False
+
+    def is_score(self, pipe):
+        if self.rect.x == pipe.top_rect.x + pipe.width//2:
             return True
         else:
             return False

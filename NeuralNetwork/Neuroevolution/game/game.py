@@ -46,6 +46,8 @@ class Game:
         for pipe in self.pipes:
             if self.bird.collide(pipe):
                 self.start_objects()
+            if self.bird.is_score(pipe):
+                self.score += 1
             pipe.update()
 
     def on_execute(self):

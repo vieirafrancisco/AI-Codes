@@ -2,9 +2,10 @@ import os
 
 import pygame
 
-from .settings import *
-from .bird import Bird
-from .pipe import Pipe
+from game.settings import *
+from game.bird import Bird
+from game.pipe import Pipe
+from network.network import NeuralNetwork
 
 class Game:
     def __init__(self):
@@ -18,7 +19,7 @@ class Game:
     def start_objects(self):
         self.high_score = max(self.high_score, self.score)
         self.score = 0
-        self.bird = Bird(HEIGHT/2, (255,255,255))
+        self.birds = [Bird(HEIGHT/2, (255,255,255)) for i in range(1)]
         self.pipes = [Pipe(WIDTH + i*230) for i in range(2)]
         self.font = pygame.font.Font(None, 20)
 
@@ -35,20 +36,26 @@ class Game:
         pygame.font.quit()
 
     def on_render(self):
-        self.bird.draw(self._disp_window)
+        for bird in self.birds:
+            bird.draw(self._disp_window)
         for pipe in self.pipes:
             pipe.draw(self._disp_window)
         self._disp_window.blit(self.font.render(f"Highscore: {self.high_score}", True, (255,255,255)), (0,0))
         self._disp_window.blit(self.font.render(f"Score: {self.score}", True, (255,255,255)), (0,20))
 
     def on_loop(self):
-        self.bird.update()
+        p = None
         for pipe in self.pipes:
-            if self.bird.collide(pipe):
-                self.start_objects()
-            if self.bird.is_score(pipe):
-                self.score += 1
             pipe.update()
+            if p == None and pipe.top_rect.x + pipe.width > 100:
+                p = pipe
+
+        for bird in self.birds:
+            if bird.collide(p):
+                self.start_objects()
+            if bird.is_score(p):
+                bird.score += 1
+            bird.update(p)
 
     def on_execute(self):
         self.on_init()

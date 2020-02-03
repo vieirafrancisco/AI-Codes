@@ -1,8 +1,10 @@
 import os
+import random
 
 import pygame
 
 from game.settings import *
+from game.population import Population
 from game.bird import Bird
 from game.pipe import Pipe
 from network.network import NeuralNetwork
@@ -15,13 +17,17 @@ class Game:
         self.clock = pygame.time.Clock()
         self.high_score = 0
         self.score = 0
+        self.population = Population(100)
+        self.birds = self.population.birds
 
     def start_objects(self):
         self.high_score = max(self.high_score, self.score)
         self.score = 0
-        self.birds = [Bird(HEIGHT/2, (255,255,255)) for i in range(1)]
+        self.distance = 0
         self.pipes = [Pipe(WIDTH + i*230) for i in range(2)]
+        self.pipe = self.pipes[0]
         self.font = pygame.font.Font(None, 20)
+        self.birds_dead = [0 for _ in self.birds]
 
     def on_init(self):
         pygame.init()
@@ -44,18 +50,27 @@ class Game:
         self._disp_window.blit(self.font.render(f"Score: {self.score}", True, (255,255,255)), (0,20))
 
     def on_loop(self):
-        p = None
-        for pipe in self.pipes:
-            pipe.update()
-            if p == None and pipe.top_rect.x + pipe.width > 100:
-                p = pipe
+        self.distance += 1
 
-        for bird in self.birds:
-            if bird.collide(p):
-                self.start_objects()
-            if bird.is_score(p):
+        for idx, pipe in enumerate(self.pipes):
+            pipe.update()
+            if pipe.top_rect.x + pipe.width - 100 == 0:
+                self.pipe = self.pipes[1-idx]
+
+        for idx, bird in enumerate(self.birds):
+            if bird.collide(self.pipe):
+                self.birds_dead[idx] = 1
+                bird.fitness += self.distance
+            if bird.is_score(self.pipe):
                 bird.score += 1
-            bird.update(p)
+                bird.fitness += 100
+                self.score = max(self.score, bird.score)
+            bird.update(self.pipe)
+
+        if all(self.birds_dead):
+            print(self.population.fitness_list)
+            self.birds = self.population.new_pop()
+            self.start_objects()
 
     def on_execute(self):
         self.on_init()

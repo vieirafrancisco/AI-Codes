@@ -5,7 +5,7 @@ from .settings import *
 from network.network import NeuralNetwork
 
 class Bird:
-    def __init__(self, color, nn=None):
+    def __init__(self, color, alive=True, nn=None):
         self.posx = 100
         self.posy = HEIGHT/2
         self.color = color
@@ -15,6 +15,7 @@ class Bird:
         self.rect = pygame.Rect(self.posx, self.posy, 20, 20)
         self.score = 0
         self.fitness = 0
+        self.alive = alive
         if nn: 
             self.nn = nn
         else: 
@@ -29,24 +30,23 @@ class Bird:
         return Bird(b1.color, NeuralNetwork.mutate(b1.nn))
 
     def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.rect)
+        if self.alive:
+            pygame.draw.rect(surface, self.color, self.rect)
 
     def update(self, pipe):
-        input_array = self.get_distances(pipe)
-        output = self.nn.feedfoward(input_array)
-
-        if output[0] > 0.5:
-            self.velocity += self.lift
-            #print(self.rect.y, self.velocity)
-        
-        '''
-        if pygame.key.get_pressed()[pygame.K_UP]:
-            self.velocity += self.lift
-        '''
-
-        self.velocity += self.gravity
-        self.velocity *= 0.9 
-        self.rect.y += self.velocity
+        if self.alive:
+            input_array = self.get_distances(pipe)
+            output = self.nn.feedfoward(input_array)
+            if output[0] > 0.5:
+                self.velocity += self.lift
+                #print(self.rect.y, self.velocity)
+            '''
+            if pygame.key.get_pressed()[pygame.K_UP]:
+                self.velocity += self.lift
+            '''
+            self.velocity += self.gravity
+            self.velocity *= 0.9 
+            self.rect.y += self.velocity
 
     def collide(self, pipe):
         offset_window = self.rect.y > HEIGHT or self.rect.y < 0

@@ -17,7 +17,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.high_score = 0
         self.score = 0
-        self.population = Population(100)
+        self.generation = 1
+        self.population = Population(10)
         self.birds = self.population.birds
 
     def start_objects(self):
@@ -28,6 +29,8 @@ class Game:
         self.pipe = self.pipes[0]
         self.font = pygame.font.Font(None, 20)
         self.birds_dead = [0 for _ in self.birds]
+        for bird in self.birds:
+            bird.alive = True
 
     def on_init(self):
         pygame.init()
@@ -48,6 +51,7 @@ class Game:
             pipe.draw(self._disp_window)
         self._disp_window.blit(self.font.render(f"Highscore: {self.high_score}", True, (255,255,255)), (0,0))
         self._disp_window.blit(self.font.render(f"Score: {self.score}", True, (255,255,255)), (0,20))
+        self._disp_window.blit(self.font.render(f"Generation: {self.generation}", True, (255,255,255)), (0,40))
 
     def on_loop(self):
         self.distance += 1
@@ -60,16 +64,18 @@ class Game:
         for idx, bird in enumerate(self.birds):
             if bird.collide(self.pipe):
                 self.birds_dead[idx] = 1
+                self.alive = False
                 bird.fitness += self.distance
             if bird.is_score(self.pipe):
                 bird.score += 1
-                bird.fitness += 100
+                bird.fitness += 5000
                 self.score = max(self.score, bird.score)
             bird.update(self.pipe)
 
         if all(self.birds_dead):
-            print(self.population.fitness_list)
             self.birds = self.population.new_pop()
+            print(self.population.fitness_list)
+            self.generation += 1
             self.start_objects()
 
     def on_execute(self):

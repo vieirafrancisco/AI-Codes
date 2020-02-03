@@ -18,7 +18,7 @@ class Game:
         self.high_score = 0
         self.score = 0
         self.generation = 1
-        self.population = Population(10)
+        self.population = Population(200)
         self.birds = self.population.birds
 
     def start_objects(self):
@@ -27,7 +27,6 @@ class Game:
         self.distance = 0
         self.pipes = [Pipe(WIDTH + i*230) for i in range(2)]
         self.pipe = self.pipes[0]
-        self.font = pygame.font.Font(None, 20)
         self.birds_dead = [0 for _ in self.birds]
         for bird in self.birds:
             bird.alive = True
@@ -35,6 +34,7 @@ class Game:
     def on_init(self):
         pygame.init()
         pygame.font.init()
+        self.font = pygame.font.Font(None, 20)
         self.running = True
         self._disp_window = pygame.display.set_mode(self.size)
         pygame.display.set_caption("Flappy Bird")
@@ -60,11 +60,12 @@ class Game:
             pipe.update()
             if pipe.top_rect.x + pipe.width - 100 == 0:
                 self.pipe = self.pipes[1-idx]
+            print(self.pipe)
 
         for idx, bird in enumerate(self.birds):
             if bird.collide(self.pipe):
                 self.birds_dead[idx] = 1
-                self.alive = False
+                bird.alive = False
                 bird.fitness += self.distance
             if bird.is_score(self.pipe):
                 bird.score += 1

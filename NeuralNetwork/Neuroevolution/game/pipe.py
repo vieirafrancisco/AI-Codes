@@ -9,7 +9,7 @@ class Pipe:
         self.speed = -1
         self.posx = posx
         self.space = 80
-        self.width = 35
+        self.width = 5
         self.height = random.randint(HEIGHT/5, 4*HEIGHT/5 - 10)
         self.top_rect = pygame.Rect(self.posx, 0, self.width, self.height)
         self.btn_rect = pygame.Rect(self.posx, self.height + self.space, self.width, HEIGHT)

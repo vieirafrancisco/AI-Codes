@@ -38,12 +38,13 @@ class NeuralNetwork:
     @staticmethod
     def mutate(n1):
         nn = NeuralNetwork(n1.layers)
-        r = random.random() * 2 - 1
         for idx, w in enumerate(nn.weights):
+            r = random.random() * 2 - 1
             i = random.randint(0, w.rows-1)
             j = random.randint(0, w.cols-1)
             nn.weights[idx].matrix[i][j] = r
         for idx, b in enumerate(nn.bias):
+            r = random.random() * 2 - 1
             i = random.randint(0, b.rows-1)
             nn.bias[idx].matrix[i][0] = r
         return nn

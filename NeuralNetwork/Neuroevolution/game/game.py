@@ -18,7 +18,7 @@ class Game:
         self.high_score = 0
         self.score = 0
         self.generation = 1
-        self.population = Population(10)
+        self.population = Population(100)
         self.birds = self.population.birds
 
     def start_objects(self):
@@ -62,15 +62,17 @@ class Game:
                 self.pipe = self.pipes[1-idx]
 
         for idx, bird in enumerate(self.birds):
-            if bird.collide(self.pipe):
-                self.birds_dead[idx] = 1
-                bird.alive = False
-                bird.fitness += self.distance
-            if bird.is_score(self.pipe):
-                bird.score += 1
-                bird.fitness += 5000
-                self.score = max(self.score, bird.score)
-            bird.update(self.pipe)
+            if bird.alive:
+                if bird.collide(self.pipe):
+                    self.birds_dead[idx] = 1
+                    bird.alive = False
+                    bird.fitness += self.distance
+                    #print(bird.fitness)
+                if bird.is_score(self.pipe):
+                    bird.score += 1
+                    bird.fitness += 20
+                    self.score = max(self.score, bird.score)
+                bird.update(self.pipe)
 
         if all(self.birds_dead):
             self.birds = self.population.new_pop()

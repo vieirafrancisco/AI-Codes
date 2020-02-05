@@ -8,7 +8,7 @@ class Pipe:
     def __init__(self, posx):
         self.speed = -1
         self.posx = posx
-        self.space = 80
+        self.space = 120
         self.width = 5
         self.height = random.randint(HEIGHT/5, 4*HEIGHT/5 - 10)
         self.top_rect = pygame.Rect(self.posx, 0, self.width, self.height)

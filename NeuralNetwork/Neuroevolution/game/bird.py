@@ -26,8 +26,8 @@ class Bird:
         return Bird(b1.color, nn=NeuralNetwork.cross_over(b1.nn, b2.nn))
 
     @staticmethod
-    def mutate(b1):
-        return Bird(b1.color, nn=NeuralNetwork.mutate(b1.nn))
+    def mutate(b1, rate):
+        return Bird(b1.color, nn=NeuralNetwork.mutate(b1.nn, rate))
 
     def draw(self, surface):
         if self.alive:
@@ -63,7 +63,7 @@ class Bird:
 
     def get_distances(self, pipe):
         x = pipe.top_rect.x - self.rect.x
-        y = pipe.top_rect.y + pipe.height - self.rect.y
+        y = pipe.height + (pipe.space//2) - self.rect.y
         if x+y == 0: 
             s = 1
         else: 

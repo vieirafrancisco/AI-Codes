@@ -56,6 +56,13 @@ class Matrix:
         m = other * -1
         return self + m
 
+    def copy(self):
+        other = Matrix(self.rows, self.cols)
+        for i in range(self.rows):
+            for j in range(self.cols):
+                other.matrix[i][j] = self.matrix[i][j]
+        return other
+
     @property
     def T(self):
         tm = Matrix(self.cols, self.rows)

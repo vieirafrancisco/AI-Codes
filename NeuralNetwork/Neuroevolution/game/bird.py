@@ -62,9 +62,14 @@ class Bird:
             return False
 
     def get_distances(self, pipe):
-        x = 200
+        x = pipe.top_rect.x - self.rect.x
         y = pipe.top_rect.y + pipe.height - self.rect.y
-        print(y)
-        if x+y == 0: s = 1
-        else: s = x+y
+        if x+y == 0: 
+            s = 1
+        else: 
+            s = x+y
         return [x/s, y/s]
+
+    def get_distances2(self, pipe):
+        sum = self.rect.y + pipe.top_rect.x + pipe.height + pipe.btn_rect.y
+        return [self.rect.y/sum, pipe.top_rect.x/sum, pipe.height/sum, pipe.btn_rect.y/sum] 

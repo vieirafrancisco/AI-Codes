@@ -18,7 +18,7 @@ class Game:
         self.high_score = 0
         self.score = 0
         self.generation = 1
-        self.population = Population(200)
+        self.population = Population(10)
         self.birds = self.population.birds
 
     def start_objects(self):
@@ -60,7 +60,6 @@ class Game:
             pipe.update()
             if pipe.top_rect.x + pipe.width - 100 == 0:
                 self.pipe = self.pipes[1-idx]
-            print(self.pipe)
 
         for idx, bird in enumerate(self.birds):
             if bird.collide(self.pipe):
@@ -75,7 +74,6 @@ class Game:
 
         if all(self.birds_dead):
             self.birds = self.population.new_pop()
-            print(self.population.fitness_list)
             self.generation += 1
             self.start_objects()
 
